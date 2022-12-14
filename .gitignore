@@ -1,0 +1,8 @@
+﻿Rendering/Library
+Rendering/.vs
+*.csproj
+*.log
+Rendering/obj
+Rendering/Packages
+Rendering/Temp
+Rendering/UserSettings
