@@ -20,9 +20,11 @@ namespace Assets.Scripts.Rendering_1_Matrices
             float cosZ = Mathf.Cos(radZ);
 
             var pointTemp = point;
-            pointTemp.x = point.x * cosZ - point.y * sinZ;
-            pointTemp.y = point.x * sinZ + point.y * cosZ;
-
+            Vector3 xAxis = new Vector3(cosX * cosZ, cosX * sinZ + sinX * sinY * cosZ,
+                sinX * sinZ - cosX * sinY * cosZ);
+            Vector3 yAxis = new Vector3(-cosY*sinZ, cosX*cosZ-sinX*sinY*sinZ, sinX*cosZ+cosX*sinY*sinZ);
+            Vector3 zAxis = new Vector3(sinY, -sinX*cosY, cosX*cosY);
+            pointTemp = point.x * xAxis + point.y * yAxis + point.z * zAxis; 
             return pointTemp;
         }
     }
