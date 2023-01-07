@@ -6,9 +6,18 @@ namespace Assets.Scripts.Rendering_1_Matrices
     {
         [SerializeField] private Vector3 _offsetPosition;
 
-        public override Vector3 Apply(Vector3 point)
+        public override Matrix4x4 Matrix
         {
-            return point + _offsetPosition;
+            get
+            {
+                var matrix = new Matrix4x4();
+                matrix.SetRow(0, new Vector4(0, 0, 0, _offsetPosition.x));
+                matrix.SetRow(1, new Vector4(0, 0, 0, _offsetPosition.y));
+                matrix.SetRow(2, new Vector4(0, 0, 0, _offsetPosition.z));
+                matrix.SetRow(3, new Vector4(0, 0, 0, 1));
+
+                return matrix;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Assets.Scripts.Rendering_1_Matrices;
 using UnityEngine;
 
@@ -33,7 +34,6 @@ public class TransformationGrid : MonoBehaviour
 // Update is called once per frame
     void Update()
     {
-        GetComponents<Transformation>(_transformations);
         for (int i = 0, z = 0; z < _gridResolution; z++)
         {
             for (int y = 0; y < _gridResolution; y++)
@@ -46,18 +46,34 @@ public class TransformationGrid : MonoBehaviour
         }
     }
 
+    private Matrix4x4 _transfromMatrix;
+
     // 这里就是根据父物体上的变换组件，对每一个顶点进行变换，得到每个顶点变换后的坐标
     private Vector3 TransformPointBy(int x, int y, int z)
     {
-        var position = GetPointCoordinatesBy(x, y, z);
+        UpdateTransfromMatrix();
 
-        int transCount = _transformations.Count;
-        for (int i = 0; i < transCount; i++)
-        {
-           position = _transformations[i].Apply(position);
-        }
-
+        var position = PerformTransformMatrixBy(x, y, z);
         return position;
+    }
+
+    private Vector3 PerformTransformMatrixBy(int x, int y, int z)
+    {
+        var position = GetPointCoordinatesBy(x, y, z);
+        return _transfromMatrix.MultiplyPoint(position);
+    }
+
+    private void UpdateTransfromMatrix()
+    {
+        GetComponents<Transformation>(_transformations);
+        if (null == _transformations) return;
+        int transCount = _transformations.Count;
+        if (transCount <= 0) return;
+        _transfromMatrix = _transformations[0].Matrix;
+        for (int i = 1; i < transCount; i++)
+        {
+            _transfromMatrix = _transformations[i].Matrix * _transfromMatrix;
+        }
     }
 
     private Transform CreateGridPointBy(int x, int y, int z)
