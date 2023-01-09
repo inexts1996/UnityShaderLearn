@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9061ff6d483e149a3aba10921c32eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offsetPosition: {x: 0, y: 0, z: 0}
+  _offsetPosition: {x: 1, y: 1, z: 1}
 --- !u!114 &1362588669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0d9feeb5346e184a8718765dc9678ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rotation: {x: 0, y: 0, z: 0}
+  _rotation: {x: 1, y: 1, z: 1}
 --- !u!114 &1362588671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,6 +402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ab5b3d05295d24ba5839ffa8b20a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _focalLength: 1
 --- !u!1 &1697221508
 GameObject:
   m_ObjectHideFlags: 0
