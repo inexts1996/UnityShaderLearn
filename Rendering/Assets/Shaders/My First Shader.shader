@@ -17,14 +17,23 @@ Shader "Custom/My First Shader"
             #include "UnityCG.cginc"
 
             float4 _Tint;
-
-            float4 MyVertexProgram(float4 position:POSITION): SV_POSITION
+            struct Interpolators
             {
+               float4 position:SV_POSITION;
+               float3 localPosition:TEXTURECOORD0;
+
+            };
+
+            float4 MyVertexProgram(float4 position:POSITION, out float3 localPosition:TEXTURECOORD0): SV_POSITION
+            {
+                localPosition = position.xyz;
+
                 return UnityObjectToClipPos(position);
             }
-            float4 MyFragmentProgram(float4 position:SV_POSITION) : SV_TARGET
+
+            float4 MyFragmentProgram(Interpolators i) : SV_TARGET
             {
-                return _Tint;
+                return float4(i.localPosition + 0.5, 1) * _Tint;
             }
             ENDCG
         }
