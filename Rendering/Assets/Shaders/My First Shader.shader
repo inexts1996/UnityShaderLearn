@@ -1,5 +1,11 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Custom/My First Shader"
 {
+    Properties
+    {
+        _Tint("Tint", Color) = (1, 1, 1,1)
+    }
     SubShader
     {
         pass
@@ -10,13 +16,15 @@ Shader "Custom/My First Shader"
 
             #include "UnityCG.cginc"
 
-            float4 MyVertexProgram(): SV_POSITION
-            {
-                return 0;
-            }
-            void MyFragmentProgram()
-            {
+            float4 _Tint;
 
+            float4 MyVertexProgram(float4 position:POSITION): SV_POSITION
+            {
+                return UnityObjectToClipPos(position);
+            }
+            float4 MyFragmentProgram(float4 position:SV_POSITION) : SV_TARGET
+            {
+                return _Tint;
             }
             ENDCG
         }
