@@ -39,6 +39,7 @@ Shader "Custom/My First Shader"
             {
                 Interpolators i;
                 i.position = UnityObjectToClipPos(v.position);
+
                 i.uv = v.uv * _MainTex_ST.xy + _MainTex_ST.zw;
 
                 return i;
