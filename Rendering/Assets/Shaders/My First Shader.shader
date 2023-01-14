@@ -1,10 +1,13 @@
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Custom/My First Shader"
 {
     Properties
     {
         _Tint("Tint", Color) = (1, 1, 1,1)
+        _MainTex("MainTex", 2D) = "white" {}
     }
     SubShader
     {
@@ -17,23 +20,33 @@ Shader "Custom/My First Shader"
             #include "UnityCG.cginc"
 
             float4 _Tint;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            
             struct Interpolators
             {
                float4 position:SV_POSITION;
-               float3 localPosition:TEXTURECOORD0;
-
+               float2 uv:TEXCOORD0;
             };
 
-            float4 MyVertexProgram(float4 position:POSITION, out float3 localPosition:TEXTURECOORD0): SV_POSITION
+            struct VertexData
             {
-                localPosition = position.xyz;
+                float4 position:POSITION;
+                float2 uv:TEXCOORD0;
+            };
 
-                return UnityObjectToClipPos(position);
+            Interpolators MyVertexProgram(VertexData v)
+            {
+                Interpolators i;
+                i.position = UnityObjectToClipPos(v.position);
+                i.uv = v.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+
+                return i;
             }
 
             float4 MyFragmentProgram(Interpolators i) : SV_TARGET
             {
-                return float4(i.localPosition + 0.5, 1) * _Tint;
+                return tex2D(_MainTex, i.uv) * _Tint; 
             }
             ENDCG
         }
