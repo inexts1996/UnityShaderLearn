@@ -47,7 +47,8 @@ Shader "Custom/Textured With Detail"
 
             float4 MyFragmentProgram(Interpolators i) : SV_TARGET
             {
-                return tex2D(_MainTex, i.uv) * _Tint; 
+                float4 color = tex2D(_MainTex, i.uv) * _Tint; 
+                return color; 
             }
             ENDCG
         }
