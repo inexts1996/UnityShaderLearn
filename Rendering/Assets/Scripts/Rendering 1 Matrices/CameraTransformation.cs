@@ -5,6 +5,7 @@ namespace Assets.Scripts.Rendering_1_Matrices
     internal class CameraTransformation : Transformation
     {
         [SerializeField] private float _focalLength = 1.0f;
+
         public override Matrix4x4 Matrix
         {
             get

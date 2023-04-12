@@ -22,9 +22,9 @@ namespace Assets.Scripts.Rendering_1_Matrices
                 float cosZ = Mathf.Cos(radZ);
 
                 // Vector3 xAxis = new Vector3(cosX * cosZ, cosX * sinZ + sinX * sinY * cosZ,
-                    // sinX * sinZ - cosX * sinY * cosZ);
+                // sinX * sinZ - cosX * sinY * cosZ);
                 // Vector3 yAxis = new Vector3(-cosY * sinZ, cosX * cosZ - sinX * sinY * sinZ,
-                    // sinX * cosZ + cosX * sinY * sinZ);
+                // sinX * cosZ + cosX * sinY * sinZ);
                 // Vector3 zAxis = new Vector3(sinY, -sinX * cosY, cosX * cosY);
 
                 var matrix = new Matrix4x4();
@@ -39,6 +39,5 @@ namespace Assets.Scripts.Rendering_1_Matrices
                 return matrix;
             }
         }
-        
     }
 }

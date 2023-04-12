@@ -1,170 +1,59 @@
-using UnityEngine;
+using System;
 using System.Collections;
-using TMPro;
+using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter)), RequireComponent(typeof(MeshRenderer))]
 public class Grid : MonoBehaviour
 {
-    [SerializeField] private int _xSize;
-    [SerializeField] private int _ySize;
-
-    private void Awake()
-    {
-        GnerateGameObject();
-    }
-
-    private void GnerateGameObject()
-    {
-        GnerateMesh();
-        GnerateVertices();
-        GnerateTriangles();
-        GnerateUV();
-        GnerateTangents();
-        UpdateMesh();
-    }
-
-    private Vector4[] _tangents;
-    private Vector4 _tangent = new Vector4(1f, 0f, 0f, 0f);
-
-    private void GnerateTangents()
-    {
-        if (null == _tangents)
-        {
-            InitTangents();
-        }
-
-        for (int i = 0, y = 0;  y <= _ySize; y++)
-        {
-            for (int x = 0; x <= _xSize; x++, i++)
-            {
-                _tangents[i] = _tangent;
-            } 
-        }
-    }
-
-    private void InitTangents()
-    {
-        int tangentCount = GetTangentCount();
-        _tangents = new Vector4[tangentCount];
-    }
-
-    private int GetTangentCount()
-    {
-        return GetVerticesCount();
-    }
-
-    private Vector2[] _uv;
-
-    private void GnerateUV()
-    {
-        if (null == _uv)
-        {
-            InitUV();
-        }
-
-        float xSizef = _xSize * 1f;
-        float ySizef = _ySize * 1f;
-        for (int i = 0, y = 0; y <= _ySize; y++)
-        {
-            for (int x = 0; x <= _xSize; x++, i++)
-            {
-                _uv[i] = new Vector2(x / xSizef, y / ySizef);
-            }
-        }
-    }
-
-    private void InitUV()
-    {
-        int uvSize = GetUVSize();
-        _uv = new Vector2[uvSize];
-    }
-
-    private int GetUVSize()
-    {
-        return GetVerticesCount();
-    }
-
-    private void GnerateTriangles()
-    {
-        if (null == _triangles)
-        {
-            InitTriangles();
-        }
-
-        for (int ti = 0, vi = 0, y = 0; y < _ySize; y++, vi++)
-        {
-            for (int x = 0; x < _xSize; x++, ti += 6, vi++)
-            {
-                _triangles[ti] = vi;
-                _triangles[ti + 1] = vi + _xSize + 1;
-                _triangles[ti + 2] = vi + 1;
-                _triangles[ti + 3] = vi + 1;
-                _triangles[ti + 4] = vi + _xSize + 1;
-                _triangles[ti + 5] = vi + _xSize + 2;
-            }
-        }
-    }
-
-    private void InitTriangles()
-    {
-        int triangleSize = GetTriangleVerticeCount();
-        _triangles = new int[triangleSize];
-    }
-
-    private int GetTriangleVerticeCount()
-    {
-        return _xSize * _ySize * 6;
-    }
-
-    private void UpdateMesh()
-    {
-        if (null == _mesh) return;
-        _mesh.vertices = _vertices;
-        _mesh.triangles = _triangles;
-        _mesh.RecalculateNormals();
-        _mesh.uv = _uv;
-        _mesh.tangents = _tangents;
-    }
-
+    public int _xSize, _ySize;
     private Mesh _mesh;
 
-    private void GnerateMesh()
+    void Awake()
     {
-        _mesh = new Mesh();
-        _mesh.name = "Procedural Grid";
-        GetComponent<MeshFilter>().mesh = _mesh;
+        Generate();
     }
 
-    [SerializeField] private Vector3[] _vertices;
-    private int[] _triangles;
+    private Vector3[] _vertices;
+    private Vector2[] _uvs;
+    private Vector4[] _tangets;
 
-    private void GnerateVertices()
+    private void Generate()
     {
-        int verticesCount = GetVerticesCount();
-        _vertices = new Vector3[verticesCount];
+        _vertices = new Vector3[(_xSize + 1) * (_ySize + 1)];
+        _uvs = new Vector2[_vertices.Length];
+        _tangets = new Vector4[_vertices.Length];
+        Vector4 tanget = new Vector4(1f, 0f, 0f, -1f);
+        GetComponent<MeshFilter>().mesh = _mesh = new Mesh();
+        _mesh.name = "Procedural Grid";
 
         for (int i = 0, y = 0; y <= _ySize; y++)
         {
             for (int x = 0; x <= _xSize; x++, i++)
             {
                 _vertices[i] = new Vector3(x, y);
+                _uvs[i] = new Vector2(x *1.0f / _xSize, y * 1.0f / _ySize);
+                _tangets[i] = tanget;
             }
         }
-    }
 
-    private int GetVerticesCount()
-    {
-        return (_xSize + 1) * (_ySize + 1);
-    }
+        _mesh.vertices = _vertices;
+        _mesh.uv = _uvs;
+        _mesh.tangents = _tangets;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
+        int[] triangles = new int[_ySize * _xSize * 6];
 
-    // Update is called once per frame
-    void Update()
-    {
+        for (int ti = 0, vi = 0, y = 0; y < _ySize; y++, vi++)
+        {
+            for (int x = 0; x < _xSize; x++, ti += 6, vi++)
+            {
+                triangles[ti] = vi;
+                triangles[ti + 3] = triangles[ti + 2] = vi + 1;
+                triangles[ti + 4] = triangles[ti + 1] = vi + _xSize + 1;
+                triangles[ti + 5] = vi + _xSize + 2;
+                _mesh.triangles = triangles;
+                _mesh.RecalculateNormals();
+            }
+        }
     }
 
     private void OnDrawGizmos()
@@ -172,9 +61,9 @@ public class Grid : MonoBehaviour
         if (null == _vertices) return;
 
         Gizmos.color = Color.black;
-        for (int i = _vertices.Length - 1; i > -1; i--)
+        foreach (var pos in _vertices)
         {
-            Gizmos.DrawSphere(_vertices[i], 0.1f);
+            Gizmos.DrawSphere(pos, 0.1f);
         }
     }
 }
